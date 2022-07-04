@@ -1,0 +1,25 @@
+{
+    "name": "rainsens/dinglog",
+    "description": "Send laravel log to DingTalk.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Rainsens\\Dinglog\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Rainsens\\Dinglog\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "rainsen",
+            "email": "yusen@rainsen.com"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    }
+}
