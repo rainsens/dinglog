@@ -4,11 +4,18 @@ namespace Rainsens\Dinglog\Tests;
 
 use PHPUnit\Framework\TestCase;
 
-class TinglogTest extends TestCase
+class DinglogTest extends TestCase
 {
 	/** @test */
-	public function it_returns_a_ramdom_text()
+	public function can_get_ding_talk_token()
 	{
-		$this->assertTrue(true);
+		$accessToken = new MockedAccessToken();
+		$this->assertEquals('mocked_token', $accessToken->token());
+	}
+	
+	/** @test */
+	public function can_get_ding_talk_token_string()
+	{
+	
 	}
 }

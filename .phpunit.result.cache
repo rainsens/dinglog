@@ -1,1 +1,1 @@
-{"version":1,"defects":[],"times":{"Rainsens\\Dinglog\\Tests\\TinglogTest::it_returns_a_ramdom_text":0.006}}
+{"version":1,"defects":[],"times":{"Rainsens\\Dinglog\\Tests\\TinglogTest::it_returns_a_ramdom_text":0.006,"Rainsens\\Dinglog\\Tests\\DinglogTest::can_get_ding_talk_token":0.008}}
