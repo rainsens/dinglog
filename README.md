@@ -1,4 +1,4 @@
-<p align="center"><code>dinglog</code> is provided pushing Laravel logs and exceptions to DingTalk message.</p>
+<p><code>dinglog</code> is provided pushing Laravel logs and exceptions to DingTalk message.</p>
 
 ## Requirements
 
