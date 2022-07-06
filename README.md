@@ -16,7 +16,7 @@ composer require rainsens/dinglog
 Then run following command to publish config.
 
 ```
-php artisan vendor:publish --provider="Rainsens\Dinglog\DinglogServiceProvider"
+php artisan vendor:publish --provider="Rainsens\Dinglog\Providers\DinglogServiceProvider"
 ```
 
 ## Usage
