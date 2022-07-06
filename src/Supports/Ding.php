@@ -2,60 +2,97 @@
 
 namespace Rainsens\Dinglog\Supports;
 
-use Exception;
-use AlibabaCloud\Tea\Utils\Utils;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
-use Darabonba\OpenApi\Models\Config;
-use Illuminate\Support\Facades\Cache;
-use AlibabaCloud\Tea\Exception\TeaError;
-use AlibabaCloud\SDK\Dingtalk\Voauth2_1_0\Dingtalk;
-use AlibabaCloud\SDK\Dingtalk\Voauth2_1_0\Models\GetAccessTokenRequest;
+use GuzzleHttp\Exception\GuzzleException;
 
 class Ding
 {
-	public static $cacheKey = 'ding_token';
+	const MSG_TEXT = 'text';
+	const MSG_LINK= 'link';
+	const MSG_MARKDOWN = 'markdown';
 	
-	public static function client()
+	protected static $hook = "https://oapi.dingtalk.com/robot/send";
+	
+	protected static function uri()
 	{
-		$config = new Config([]);
-		$config->protocol = "https";
-		$config->regionId = "central";
-		return new Dingtalk($config);
+		return self::$hook . '?access_token='. config('dinglog.token');
 	}
 	
-	public static function token()
+	public static function pushText($content)
 	{
-		if ($token = Cache::get(self::$cacheKey)) {
-			Log::debug("Get old ding token");
-			return Cache::get(self::$cacheKey);
-		}
+		$http = new Client();
 		
-		Log::debug("Get new ding token");
-		
-		$client = self::client();
-		
-		$request = new GetAccessTokenRequest([
-			"appKey" => "dingv3tyjakgd8eary56",
-			"appSecret" => "PoHokRDOVnBnW31J1EPnjEBnbKpYe4BxERL4JS2lMwhqlMyBbPLCdTtl3dSiZ6tM"
-		]);
+		$data = [
+			'msgtype' => self::MSG_TEXT,
+			self::MSG_TEXT => ['content' => $content]
+		];
 		
 		try {
 			
-			$response = $client->getAccessToken($request);
-			$content = $response->body;
-			Cache::put(self::$cacheKey, $content->accessToken, $content->expireIn);
+			$http->post(self::uri(), [
+				'headers' => ['content-type' => 'application/json'],
+				'body' => json_encode($data)
+			]);
 			
-			return $content->accessToken;
-			
-		} catch (Exception $e) {
-			if (!($e instanceof TeaError)) {
-				$e = new TeaError([], $e->getMessage(), $e->getCode(), $e);
-			}
-			if (Utils::empty_($e->code) and !Utils::empty_($e->message)) {
-				Log::debug($e->message);
-			}
-			
-			return null;
+		} catch (GuzzleException $exception) {
+			Log::debug($exception->getMessage());
 		}
+	}
+	
+	public static function pushLink($title, $text, $url, $pic = null)
+	{
+		$http = new Client();
+		
+		$data = [
+			'msgtype' => self::MSG_LINK,
+			self::MSG_LINK => [
+				'title' => $title,
+				'text' => $text,
+				'picUrl' => $pic,
+				'messageUrl' => $url,
+			]
+		];
+		
+		try {
+			
+			$http->post(self::uri(), [
+				'headers' => ['content-type' => 'application/json'],
+				'body' => json_encode($data)
+			]);
+			
+		} catch (GuzzleException $exception) {
+			Log::debug($exception->getMessage());
+		}
+	}
+	
+	public static function pushMarkdown($title, $text)
+	{
+		$http = new Client();
+		
+		$data = [
+			'msgtype' => self::MSG_MARKDOWN,
+			self::MSG_MARKDOWN => [
+				'title' => $title,
+				'text' => $text,
+			]
+		];
+		
+		try {
+			
+			$http->post(self::uri(), [
+				'headers' => ['content-type' => 'application/json'],
+				'body' => json_encode($data)
+			]);
+			
+		} catch (GuzzleException $exception) {
+			Log::debug($exception->getMessage());
+		}
+	}
+	
+	public static function pushException($fullUrl, $msg, $file, $code, $line, $trace)
+	{
+		$content = "URL: $fullUrl\nMessage: $msg\nFile: $file\nCode: $code\nLine: $line\nTrace: $trace";
+		self::pushText($content);
 	}
 }
